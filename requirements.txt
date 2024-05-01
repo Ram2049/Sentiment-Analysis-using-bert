@@ -1,0 +1,8 @@
+google_api_python_client==2.125.0
+numpy==1.26.4
+pandas==2.2.2
+plotly==5.20.0
+Requests==2.31.0
+streamlit==1.33.0
+torch==2.2.2
+transformers==4.39.3
