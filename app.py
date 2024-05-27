@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import json
-from streamlit_lottie import st_lottie
 from uliti import predict
 from transformers import AutoTokenizer,AutoModelForSequenceClassification
 import torch
