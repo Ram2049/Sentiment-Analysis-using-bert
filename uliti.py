@@ -40,7 +40,7 @@ def video_id(youtube_link):
 def yt_predict(video_id):
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyBvOcknQzZ4xTdyyauVQCq2uejJcF_-Hzw"
+    DEVELOPER_KEY = "AIzaSyC32tNdxJ-i0legfuksdnebmBegmBeUnXs"
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
