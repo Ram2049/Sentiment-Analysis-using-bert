@@ -6,8 +6,8 @@ import googleapiclient.errors
 import pandas as pd
 import numpy as np
 
-tokenizer = AutoTokenizer.from_pretrained('D:\Project\MINI PROJECT\Sentiment analysis application\model')
-model = AutoModelForSequenceClassification.from_pretrained('D:\Project\MINI PROJECT\Sentiment analysis application\model')
+tokenizer = AutoTokenizer.from_pretrained('\model')
+model = AutoModelForSequenceClassification.from_pretrained('\model')
 
 
 
