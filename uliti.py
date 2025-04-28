@@ -5,9 +5,10 @@ import googleapiclient.discovery
 import googleapiclient.errors
 import pandas as pd
 import numpy as np
+import re
 
-tokenizer = AutoTokenizer.from_pretrained('\model')
-model = AutoModelForSequenceClassification.from_pretrained('\model')
+tokenizer = AutoTokenizer.from_pretrained('D:\Project\MINI PROJECT\Sentiment analysis application\model')
+model = AutoModelForSequenceClassification.from_pretrained('D:\Project\MINI PROJECT\Sentiment analysis application\model')
 
 
 
@@ -17,30 +18,38 @@ def predict(inputtext):
     predictions_score=int(torch.argmax(results.logits))+1
     return predictions_score
 
-def video_id(youtube_link):
-    video_id = None
 
-    if "youtube.com/watch?v=" in youtube_link:
-        video_id = youtube_link.split("youtube.com/watch?v=")[1]
-    elif "youtu.be/" in youtube_link:
-        video_id = youtube_link.split("youtu.be/")[1]
-    elif "youtube.com/embed/" in youtube_link:
-        video_id = youtube_link.split("youtube.com/embed/")[1]
-    else:
+def get_video_id(youtube_link):
+    """
+    Extracts the video ID from a YouTube URL.
+    
+    :param youtube_link: str, YouTube video URL
+    :return: str or None, extracted video ID or None if invalid
+    """
+    try:
+        # Regular expression to match YouTube video IDs
+        patterns = [
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)",  # Standard YouTube URL
+            r"(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&]+)",  # Shortened youtu.be URL
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^?&]+)"  # Embedded video URL
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, youtube_link)
+            if match:
+                return match.group(1)  # Extract video ID
+        
         print("Unsupported YouTube link format.")
+        return None  # If no match found, return None
 
-    if video_id:
-        # Extracting video ID from the URL (if there are additional parameters)
-        video_id = video_id.split("&")[0]
-    else:
-        print("Failed to extract video ID.")
-
-    return video_id
+    except Exception as e:
+        print(f"Error extracting video ID: {e}")
+        return None
 
 def yt_predict(video_id):
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyC32tNdxJ-i0legfuksdnebmBegmBeUnXs"
+    DEVELOPER_KEY = "AIzaSyBvOcknQzZ4xTdyyauVQCq2uejJcF_-Hzw"
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
@@ -66,9 +75,19 @@ def yt_predict(video_id):
 
     df = pd.DataFrame(comments, columns=['author', 'published_at', 'updated_at', 'like_count', 'text'])
 
-    df.drop(columns=['author', 'published_at', 'updated_at', 'like_count'])
+    df.drop(columns=['author', 'published_at', 'updated_at', 'like_count'],inplace=True)
 
     df['sentiment']=df['text'].apply(lambda x : predict(x[:100]))
+    
+    emoji_mapping = {
+    1: '😡',  # Sad face
+    2: '🙄',  # Neutral face
+    3: '😐',  # Smiling face
+    4: '😁',  # Grinning face
+    5: '🤩'   # Star-struck
+    }
+
+    df['Emoji'] = df['sentiment'].map(emoji_mapping)
 
     return df
  
